@@ -1,0 +1,14 @@
+
+\.vs/QtTableChart/v14/
+
+*.sdf
+
+*.user
+
+*.opendb
+
+GeneratedFiles/Debug/
+
+GeneratedFiles/
+
+x64/Debug/
