@@ -12,42 +12,7 @@ MainWindow::MainWindow(QWidget *parent)	: QMainWindow(parent), ui(new Ui::MainWi
 
 	//criando minha tabela inicial
 	this->criarTabela();
-
-
 	
-
-
-
-
-	//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 0), contactNames.at(0));
-	//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(1, 0), contactNames.at(1));
-	//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(2, 0), contactNames.at(2));
-
-
-	//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 1), contactPhoneNums.at(0));
-	//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(1, 1), contactPhoneNums.at(1));
-	//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(2, 1), contactPhoneNums.at(2));
-
-
-
-	//// Generate data
-	//for (int i = 0; i < row  ; i++)
-	//{
-
-	//	for (int j = 0; j < col; j++)
-	//	{
-	//		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, j), contactNames.at(0));
-	//		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, 1), contactPhoneNums.at(0));
-
-	//		//		QModelIndex index = PhoneBookModel->index(i, j, QModelIndex());
-	//		//		// 0 for all data
-	//		//		
-	//		//		//PhoneBookModel->setData(index, QString(QString::number(i) +","+ QString::number(j)));
-	//		//		PhoneBookModel->setData(index, contactNames.at(i));
-	//		//		PhoneBookModel->setData(index, contactPhoneNums.at(j));
-	//	}
-	//}
-
 
 }
 	
@@ -61,6 +26,7 @@ void MainWindow::criarConects()
 {
 	//botao criar linha da tabela
 	connect(this->ui->pushButton_addLinha, SIGNAL(clicked()), this, SLOT(slotAddLinha()));
+	connect(this->ui->pushButton_removeLinha, SIGNAL(clicked()), this, SLOT(slotRemoveLinha()));
 }
 
 
@@ -85,3 +51,43 @@ void MainWindow::slotAddLinha()
 	this->criarTabela(this->row, this->col);
 
 }
+
+
+void MainWindow::slotRemoveLinha()
+{
+	this->row--;
+	this->criarTabela(this->row, this->col);
+}
+
+
+
+
+
+//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 0), contactNames.at(0));
+//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(1, 0), contactNames.at(1));
+//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(2, 0), contactNames.at(2));
+
+
+//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 1), contactPhoneNums.at(0));
+//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(1, 1), contactPhoneNums.at(1));
+//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(2, 1), contactPhoneNums.at(2));
+
+
+
+//// Generate data
+//for (int i = 0; i < row  ; i++)
+//{
+
+//	for (int j = 0; j < col; j++)
+//	{
+//		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, j), contactNames.at(0));
+//		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, 1), contactPhoneNums.at(0));
+
+//		//		QModelIndex index = PhoneBookModel->index(i, j, QModelIndex());
+//		//		// 0 for all data
+//		//		
+//		//		//PhoneBookModel->setData(index, QString(QString::number(i) +","+ QString::number(j)));
+//		//		PhoneBookModel->setData(index, contactNames.at(i));
+//		//		PhoneBookModel->setData(index, contactPhoneNums.at(j));
+//	}
+//}

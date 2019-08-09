@@ -57,14 +57,7 @@
      </layout>
     </item>
     <item row="0" column="2">
-     <widget class="QWidget" name="widget" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>18</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
+     <widget class="QChartView" name="graphicsView"/>
     </item>
    </layout>
   </widget>
@@ -89,6 +82,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>qchartview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
