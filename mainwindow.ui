@@ -15,6 +15,9 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="2">
+     <widget class="QChartView" name="chartview" native="true"/>
+    </item>
     <item row="0" column="0">
      <widget class="QTableView" name="tableView"/>
     </item>
@@ -56,9 +59,6 @@
       </item>
      </layout>
     </item>
-    <item row="0" column="2">
-     <widget class="QChartView" name="graphicsView"/>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -85,8 +85,9 @@
  <customwidgets>
   <customwidget>
    <class>QChartView</class>
-   <extends>QGraphicsView</extends>
-   <header>qchartview.h</header>
+   <extends>QWidget</extends>
+   <header location="global">QtCharts</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -1,10 +1,10 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow(QWidget *parent)	: QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	//exibindo a interface
-    ui->setupUi(this);
-	
+	ui->setupUi(this);
+
 
 	//criando os connets da app
 	this->criarConects();
@@ -12,9 +12,51 @@ MainWindow::MainWindow(QWidget *parent)	: QMainWindow(parent), ui(new Ui::MainWi
 
 	//criando minha tabela inicial
 	this->criarTabela();
+
+	this->ui->tableView->setItemDelegate(new TableDelegate());
+
+	///////////////////////////////////////////////
+
+
+	//![1]
+//	QLineSeries *series = new QLineSeries();
+//
+//
+//	//![1]
+//
+//	//![2]
+//	series->append(0, 6);
+//	series->append(2, 4);
+//	series->append(3, 8);
+//	series->append(7, 4);
+//	series->append(10, 5);
+//	*series << QPointF(11, 1) << QPointF(13, 3) << QPointF(17, 6) << QPointF(18, 3) << QPointF(20, 2);
+	//![2]
+
+	//![3]
+	this->chart = new QChart();
+	//this->chart->legend()->hide();
+	//this->chart->addSeries(series);
+	this->chart->createDefaultAxes();
+	this->chart->setTitle("Simple line chart example");
+	//![3]
+
+	//![4]
+	
+	//this->chartView = new QChartView(chart);
+	
+	this->ui->chartview->setChart(this->chart);
+	this->ui->chartview->setRenderHint(QPainter::Antialiasing);
+
 	
 
+	
+
+
+	//this->ui->horizontalLayout->addWidget(this->chartView);
+
 }
+	
 	
 
 MainWindow::~MainWindow()
@@ -27,6 +69,8 @@ void MainWindow::criarConects()
 	//botao criar linha da tabela
 	connect(this->ui->pushButton_addLinha, SIGNAL(clicked()), this, SLOT(slotAddLinha()));
 	connect(this->ui->pushButton_removeLinha, SIGNAL(clicked()), this, SLOT(slotRemoveLinha()));
+	connect(this->ui->pushButton_updateChart, SIGNAL(clicked()), this, SLOT(slotAtualizaChart()));
+
 }
 
 
@@ -41,7 +85,7 @@ void MainWindow::criarTabela(int _row, int _col)
 
 	//jogando o modelo que foi criado na tabela da interface
 	this->ui->tableView->setModel(model);
-
+	
 }
 
 
@@ -55,21 +99,45 @@ void MainWindow::slotAddLinha()
 
 void MainWindow::slotRemoveLinha()
 {
-	this->row--;
-	this->criarTabela(this->row, this->col);
+	if (this->row > 0) {
+		this->row--;
+		this->criarTabela(this->row, this->col);
+	}
+	else {
+	
+		QMessageBox::warning(this, "Warning", "Tabela Vazia");
+	
+	}
 }
 
 
 void MainWindow::slotAtualizaChart()
 {
-    int i;
-    QLineSeries *series = new QLineSeries();
-    QModelIndex index;
-    for(i = 0;i<this->row;i++)
-    {
-        index = this->ui->graphicsView->index(i, i);
-        series->append(index.row(),index.column());
-    }
+	
+	
+	//Pesquisando a tabela para captura os valores de x e y
+	int _rows = this->ui->tableView->model()->rowCount();
+	int _cols = this->ui->tableView->model()->columnCount();
+
+
+	QList<QPointF> ptos;
+	ptos.clear();
+
+	for (int i = 0; i < _rows; i++)
+	{
+		QPointF p;
+		double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
+		double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toDouble();
+		
+		//Adicionando os ptos x e y a minha lista de pontosB
+		p.setX(x);
+		p.setY(y);
+		ptos.append(p);
+
+	}
+
+
+
 }
 
 

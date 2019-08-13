@@ -12,7 +12,12 @@
 #include <QMainWindow>
 #include <QList>
 #include <QStandardItemModel>
-include  <QLineSeries>
+#include <QLineSeries>
+#include <QtCharts>
+
+#include "tableDelegate.h"
+
+QT_CHARTS_USE_NAMESPACE
 
 namespace Ui {
 	class MainWindow;
@@ -44,7 +49,8 @@ public:
 	~MainWindow();
 
 private:
-
+	QChart *chart;;
+	QChartView *chartView;
 
 	/*!
 	* @brief Variavel para armazenar o numero de linhas da tabela
