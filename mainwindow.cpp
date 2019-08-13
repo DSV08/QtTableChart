@@ -3,7 +3,7 @@
 MainWindow::MainWindow(QWidget *parent)	: QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	//exibindo a interface
-	ui->setupUi(this);
+    ui->setupUi(this);
 	
 
 	//criando os connets da app
@@ -60,7 +60,17 @@ void MainWindow::slotRemoveLinha()
 }
 
 
-
+void MainWindow::slotAtualizaChart()
+{
+    int i;
+    QLineSeries *series = new QLineSeries();
+    QModelIndex index;
+    for(i = 0;i<this->row;i++)
+    {
+        index = this->ui->graphicsView->index(i, i);
+        series->append(index.row(),index.column());
+    }
+}
 
 
 //this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 0), contactNames.at(0));

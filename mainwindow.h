@@ -2,6 +2,8 @@
 //https://www.bogotobogo.com/Qt/Qt5_QTableView_QItemDelegate_ModelView_MVC.php
 //https://stackoverflow.com/questions/48362864/how-to-insert-qchartview-in-form-with-qt-designer
 //https://doc.qt.io/qt-5/qtcharts-linechart-example.html
+//https://forum.qt.io/topic/62375/reading-a-value-from-tableview
+//https://stackoverflow.com/questions/42487645/creating-a-qmodelindex
 
 
 #pragma once
@@ -10,6 +12,7 @@
 #include <QMainWindow>
 #include <QList>
 #include <QStandardItemModel>
+include  <QLineSeries>
 
 namespace Ui {
 	class MainWindow;
@@ -92,5 +95,8 @@ private:
 	*/
 	void slotRemoveLinha();
 
+
+
+	void slotAtualizaChart();
 };
 
