@@ -62,6 +62,9 @@ private:
 	*/
 	int col = 2;
 
+
+	//QStandardItemModel *model;
+
 	/*!
 	* @brief Ui
 	* objetos de interface do Qt

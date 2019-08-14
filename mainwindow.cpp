@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
 	//criando minha tabela inicial
-	this->criarTabela();
+	//this->criarTabela();
 
 	this->ui->tableView->setItemDelegate(new TableDelegate());
 
@@ -55,6 +55,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	//this->ui->horizontalLayout->addWidget(this->chartView);
 
+
+	//QStandardItemModel *model = new QStandardItemModel(this->row, this->col, this);
+	//this->model = new QStandardItemModel(this->row, this->col, this);
+	
+
 }
 	
 	
@@ -77,22 +82,52 @@ void MainWindow::criarConects()
 
 void MainWindow::criarTabela(int _row, int _col) 
 {
-
-	// Create model:
-	QStandardItemModel *model = new QStandardItemModel(_row, _col, this); ;
-	model->setHeaderData(0, Qt::Horizontal, tr("x"));
-	model->setHeaderData(1, Qt::Horizontal, tr("y"));
-
-	//jogando o modelo que foi criado na tabela da interface
+	QStandardItemModel *model = new QStandardItemModel(_row, _col, this);
 	this->ui->tableView->setModel(model);
+	this->ui->tableView->model()->setHeaderData(0, Qt::Horizontal, tr("x"));
+	this->ui->tableView->model()->setHeaderData(1, Qt::Horizontal, tr("y"));
+
+	//this->model = new QStandardItemModel(_row, _col, this);
+	// Create model:
+
+	/*if (this->ui->tableView->model() == nullptr)
+	{
+
+		this->model = new QStandardItemModel(_row, _col, this);
+		model->setHeaderData(0, Qt::Horizontal, tr("x"));
+		model->setHeaderData(1, Qt::Horizontal, tr("y"));
+
+		//jogando o modelo que foi criado na tabela da interface
+		//this->ui->tableView->setModel(model);
+		this->ui->tableView->setModel(model);
+		this->ui->tableView->model()->setHeaderData(0, Qt::Horizontal, tr("x"));
+		this->ui->tableView->model()->setHeaderData(1, Qt::Horizontal, tr("y"));
+
+
+	}
+	else
+	{
+		//QStandardItemModel item = this->ui->tableView->model()->item(_row, _col);
+		//bool ok = this->ui->tableView->model()->insertRow(_row);
+		//this->ui->tableView->model()->appendRow(this->model->item(_row, _col));
+		//this->ui->tableView->model()->insertRow(this->ui->tableView->model()->rowCount());
+
+	}*/
 	
 }
 
 
 void MainWindow::slotAddLinha() 
 {
+	if (this->ui->tableView->model() == nullptr)
+	{
+		this->criarTabela(this->row, this->col);
+	}
+	else
+	{
+		this->ui->tableView->model()->insertRow(this->ui->tableView->model()->rowCount());
+	}
 	this->row++;
-	this->criarTabela(this->row, this->col);
 
 }
 
@@ -108,6 +143,7 @@ void MainWindow::slotRemoveLinha()
 		QMessageBox::warning(this, "Warning", "Tabela Vazia");
 	
 	}
+	this->ui->tableView->model()->removeRow(this->ui->tableView->model()->rowCount());
 }
 
 
