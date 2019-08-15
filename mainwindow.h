@@ -14,6 +14,7 @@
 #include <QStandardItemModel>
 #include <QLineSeries>
 #include <QtCharts>
+#include <QModelIndex>
 
 #include "tableDelegate.h"
 
@@ -89,6 +90,12 @@ private:
 	void criarTabela(int row=0, int col=2);
 
 
+
+	/*!
+	* @brief Configura o Chart Inicial
+	*/
+	void configureChart();
+
 	private slots:
 
 	/*!
@@ -105,7 +112,17 @@ private:
 	void slotRemoveLinha();
 
 
-
+	/*!
+	 * @brief Slot Atualizar Chart
+	 * Esse slot é excecutado quando o botão Atualizar Chart é clicado, crindo ou atualizando
+	 * o gráfico com os pontos formados pelas cordenadas passadas na tabela
+	 */
 	void slotAtualizaChart();
+
+	/*!
+	 * @brief Slot Remover Linha por índice
+	 * Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
+	 */
+	void slotRemoverLinhaPorIndice();
 };
 

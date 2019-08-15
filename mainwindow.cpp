@@ -11,9 +11,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
 	//criando minha tabela inicial
-	//this->criarTabela();
+	this->criarTabela();
 
+
+	//Configura a tabela para que os dados de entrada sejam doubles
 	this->ui->tableView->setItemDelegate(new TableDelegate());
+
+
+	//configura o grafico inicial
+	this->configureChart();
 
 	///////////////////////////////////////////////
 
@@ -34,30 +40,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	//![2]
 
 	//![3]
-	this->chart = new QChart();
+	
 	//this->chart->legend()->hide();
 	//this->chart->addSeries(series);
-	this->chart->createDefaultAxes();
-	this->chart->setTitle("Simple line chart example");
-	//![3]
 
-	//![4]
-	
-	//this->chartView = new QChartView(chart);
-	
-	this->ui->chartview->setChart(this->chart);
-	this->ui->chartview->setRenderHint(QPainter::Antialiasing);
-
-	
-
-	
-
-
-	//this->ui->horizontalLayout->addWidget(this->chartView);
-
-
-	//QStandardItemModel *model = new QStandardItemModel(this->row, this->col, this);
-	//this->model = new QStandardItemModel(this->row, this->col, this);
 	
 
 }
@@ -71,10 +57,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::criarConects()
 {
-	//botao criar linha da tabela
+	//slots para tabela
 	connect(this->ui->pushButton_addLinha, SIGNAL(clicked()), this, SLOT(slotAddLinha()));
 	connect(this->ui->pushButton_removeLinha, SIGNAL(clicked()), this, SLOT(slotRemoveLinha()));
+	connect(this->ui->pushButton_removeLinhaIndice, SIGNAL(clicked()), this, SLOT(slotRemoverLinhaPorIndice()));
+
+	//slots para o chart
 	connect(this->ui->pushButton_updateChart, SIGNAL(clicked()), this, SLOT(slotAtualizaChart()));
+
 
 }
 
@@ -126,24 +116,26 @@ void MainWindow::slotAddLinha()
 	else
 	{
 		this->ui->tableView->model()->insertRow(this->ui->tableView->model()->rowCount());
-	}
-	this->row++;
+		this->row = this->ui->tableView->model()->rowCount();
 
+	}
+	
 }
 
 
 void MainWindow::slotRemoveLinha()
 {
 	if (this->row > 0) {
-		this->row--;
-		this->criarTabela(this->row, this->col);
+		
+		this->ui->tableView->model()->removeRow(this->ui->tableView->model()->rowCount()-1);
+		this->row = this->ui->tableView->model()->rowCount();
+
 	}
 	else {
 	
 		QMessageBox::warning(this, "Warning", "Tabela Vazia");
 	
 	}
-	this->ui->tableView->model()->removeRow(this->ui->tableView->model()->rowCount());
 }
 
 
@@ -155,10 +147,11 @@ void MainWindow::slotAtualizaChart()
 	int _rows = this->ui->tableView->model()->rowCount();
 	int _cols = this->ui->tableView->model()->columnCount();
 
-
+	//Criando uma estrutura para armazenar os pontos da tabela
 	QList<QPointF> ptos;
 	ptos.clear();
 
+	//pesquisando na tabela para capturar os pontos x e y
 	for (int i = 0; i < _rows; i++)
 	{
 		QPointF p;
@@ -169,13 +162,45 @@ void MainWindow::slotAtualizaChart()
 		p.setX(x);
 		p.setY(y);
 		ptos.append(p);
-
+		
 	}
 
+	//
+	// CRIANDO O CHART COM OS DADOS DA TABELA
+	//
+	
+	//this->desenharChart(ptos);
 
 
 }
 
+// Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
+void MainWindow::slotRemoverLinhaPorIndice()
+{
+	QItemSelectionModel *selectionModel = this->ui->tableView->selectionModel();
+	QList<QModelIndex> indexes = selectionModel->selectedIndexes();
+
+	for (QModelIndex index : indexes) {
+		selectionModel->model()->removeRow(index.row());
+		this->row = ui->tableView->model()->rowCount();
+	}
+
+}
+
+
+
+void MainWindow::configureChart() 
+{
+	//criando o Chart
+	this->chart = new QChart();
+	this->chart->createDefaultAxes();
+	this->chart->setTitle("Titulo do Grafico");
+
+	//enviando o objeto chart para a UI da Interface
+	this->ui->chartview->setChart(this->chart);
+	this->ui->chartview->setRenderHint(QPainter::Antialiasing);
+
+}
 
 //this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 0), contactNames.at(0));
 //this->ui->tableView->model()->setData(this->ui->tableView->model()->index(1, 0), contactNames.at(1));
