@@ -6,8 +6,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->setupUi(this);
 
 
-	//criando os connets da app
-	this->criarConects();
 
 
 	//criando minha tabela inicial
@@ -20,6 +18,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	//configura o grafico inicial
 	this->configureChart();
+
+
+
+	//criando os connets da app
+	this->criarConects();
 
 	///////////////////////////////////////////////
 
@@ -61,6 +64,11 @@ void MainWindow::criarConects()
 	connect(this->ui->pushButton_addLinha, SIGNAL(clicked()), this, SLOT(slotAddLinha()));
 	connect(this->ui->pushButton_removeLinha, SIGNAL(clicked()), this, SLOT(slotRemoveLinha()));
 	connect(this->ui->pushButton_removeLinhaIndice, SIGNAL(clicked()), this, SLOT(slotRemoverLinhaPorIndice()));
+
+
+	connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
+
+	connect(this->ui->tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), SLOT(slotLoadTransaction(const QItemSelection &, const QItemSelection &)));
 
 	//slots para o chart
 	connect(this->ui->pushButton_updateChart, SIGNAL(clicked()), this, SLOT(slotAtualizaChart()));
@@ -115,9 +123,13 @@ void MainWindow::slotAddLinha()
 	}
 	else
 	{
-		this->ui->tableView->model()->insertRow(this->ui->tableView->model()->rowCount());
 		this->row = this->ui->tableView->model()->rowCount();
+		this->ui->tableView->model()->insertRow(this->row);	
+	
+		//this->slotAddZeros(this->ui->tableView);
 
+		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 0), 0);
+		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 1), 0);
 	}
 	
 }
@@ -129,7 +141,7 @@ void MainWindow::slotRemoveLinha()
 		
 		this->ui->tableView->model()->removeRow(this->ui->tableView->model()->rowCount()-1);
 		this->row = this->ui->tableView->model()->rowCount();
-
+		this->slotAtualizaChart();
 	}
 	else {
 	
@@ -141,8 +153,7 @@ void MainWindow::slotRemoveLinha()
 
 void MainWindow::slotAtualizaChart()
 {
-	
-	
+	  
 	//Pesquisando a tabela para captura os valores de x e y
 	int _rows = this->ui->tableView->model()->rowCount();
 	int _cols = this->ui->tableView->model()->columnCount();
@@ -151,42 +162,69 @@ void MainWindow::slotAtualizaChart()
 	QList<QPointF> ptos;
 	ptos.clear();
 
-	//pesquisando na tabela para capturar os pontos x e y
-	for (int i = 0; i < _rows; i++)
-	{
-		QPointF p;
-		double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
-		double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toDouble();
-		
-		//Adicionando os ptos x e y a minha lista de pontosB
-		p.setX(x);
-		p.setY(y);
-		ptos.append(p);
-		
+	if (_rows > 0) {
+
+		//pesquisando na tabela para capturar os pontos x e y
+		for (int i = 0; i < _rows; i++)
+		{
+			QPointF p;
+			double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
+			double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toDouble();
+
+			//Adicionando os ptos x e y a minha lista de pontosB
+			p.setX(x);
+			p.setY(y);
+			ptos.append(p);
+
+		}
+
+		//
+		// CRIANDO O CHART COM OS DADOS DA TABELA
+		//	
+		this->desenhaChart(ptos);
 	}
-
-	//
-	// CRIANDO O CHART COM OS DADOS DA TABELA
-	//	
-    this->desenhaChart(ptos);
-
 
 }
 
 
 void MainWindow::desenhaChart(QList<QPointF> ptos)
 {
-    //Juntando os pontos em uma lineSeries
-    QLineSeries* series = new QLineSeries();
-    for(QPointF ponto : ptos)
-    {
-        series->append(ponto);
-    }
+	//Juntando os pontos em uma lineSeries
+	QLineSeries* series = new QLineSeries();
 
-    //Criando o gráfico a partir dos pontos
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    this->ui->chartview->setChart(chart);
+	series->append(ptos);
+
+	/*for (QPointF ponto : ptos)
+	{
+		series->append(ponto);
+	}
+*/
+	//Criando o gráfico a partir dos pontos		
+	QChart *chart = new QChart();
+	chart->addSeries(series);
+
+	chart->legend()->hide();
+	chart->setTitle("Titulo do Grafico");
+	chart->setAnimationOptions(QChart::AllAnimations);
+	chart->createDefaultAxes();
+
+	this->ui->chartview->setChart(chart);
+	this->ui->chartview->update();
+}
+
+
+
+void MainWindow::configureChart()
+{
+	//criando o Chart
+	QChart *chart = new QChart();
+	chart->createDefaultAxes();
+	chart->setAnimationOptions(QChart::AllAnimations);
+
+	//enviando o objeto chart para a UI da Interface
+	this->ui->chartview->setChart(chart);
+	this->ui->chartview->setRenderHint(QPainter::Antialiasing);
+
 }
 
 
@@ -200,23 +238,41 @@ void MainWindow::slotRemoverLinhaPorIndice()
 		selectionModel->model()->removeRow(index.row());
 		this->row = ui->tableView->model()->rowCount();
 	}
-
+	this->slotAtualizaChart();
 }
 
 
-
-void MainWindow::configureChart() 
+void MainWindow::slotTableChangeditemChanged( QModelIndex topLeft,  QModelIndex bottomRight)
 {
-	//criando o Chart
-	this->chart = new QChart();
-	this->chart->createDefaultAxes();
-	this->chart->setTitle("Titulo do Grafico");
-
-	//enviando o objeto chart para a UI da Interface
-	this->ui->chartview->setChart(this->chart);
-	this->ui->chartview->setRenderHint(QPainter::Antialiasing);
+	
+	this->slotAtualizaChart();
 
 }
+
+void MainWindow::slotLoadTransaction(const QItemSelection &, const QItemSelection &)
+{
+	qDebug() << "oi selecao";
+}
+
+void MainWindow::slotAddZeros(QTableView * table)
+{
+	//Pesquisando a tabela para captura os valores de x e y
+	int _rows = table->model()->rowCount();
+	int _cols = table->model()->columnCount();
+
+	//pesquisando na tabela para capturar os pontos x e y
+	for (int i = 0; i < _rows; i++)
+	{
+		for (int j = 0; j < _cols; j++)
+		{
+			table->model()->setData(table->model()->index(i, j), 0);
+		}
+	}
+
+}
+
+
+
 
 //this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 0), contactNames.at(0));
 //this->ui->tableView->model()->setData(this->ui->tableView->model()->index(1, 0), contactNames.at(1));

@@ -103,7 +103,7 @@ private:
     * Desenha o gráfico com os pontos recebidos
     * @param Ptos Lista com os pontos que serão utilizados para formar o gráfico
     */
-    void desenhaChart(ptos);
+    void desenhaChart(QList<QPointF> ptos);
 
 	private slots:
 
@@ -133,5 +133,16 @@ private:
 	 * Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
 	 */
 	void slotRemoverLinhaPorIndice();
+
+
+	void slotTableChangeditemChanged(QModelIndex topLeft, QModelIndex bottomRight);
+
+	void slotLoadTransaction(const QItemSelection &, const QItemSelection &);
+
+	void slotAddZeros(QTableView *table);
+
+signals:
+
+	void sinal();
 };
 
