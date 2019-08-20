@@ -167,12 +167,28 @@ void MainWindow::slotAtualizaChart()
 
 	//
 	// CRIANDO O CHART COM OS DADOS DA TABELA
-	//
-	
-	//this->desenharChart(ptos);
+	//	
+    this->desenhaChart(ptos);
 
 
 }
+
+
+void MainWindow::desenhaChart(QList<QPointF> ptos)
+{
+    //Juntando os pontos em uma lineSeries
+    QLineSeries* series = new QLineSeries();
+    for(QPointF ponto : ptos)
+    {
+        series->append(ponto);
+    }
+
+    //Criando o gráfico a partir dos pontos
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    this->ui->chartview->setChart(chart);
+}
+
 
 // Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
 void MainWindow::slotRemoverLinhaPorIndice()

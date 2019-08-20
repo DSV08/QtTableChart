@@ -20,6 +20,7 @@
 
 QT_CHARTS_USE_NAMESPACE
 
+
 namespace Ui {
 	class MainWindow;
 }
@@ -95,6 +96,14 @@ private:
 	* @brief Configura o Chart Inicial
 	*/
 	void configureChart();
+
+
+    /*!
+    *@brief Desenha o Chart
+    * Desenha o gráfico com os pontos recebidos
+    * @param Ptos Lista com os pontos que serão utilizados para formar o gráfico
+    */
+    void desenhaChart(ptos);
 
 	private slots:
 
