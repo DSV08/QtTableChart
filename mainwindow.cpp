@@ -69,10 +69,11 @@ void MainWindow::criarConects()
 	connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
 
 	connect(this->ui->tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), SLOT(slotLoadTransaction(const QItemSelection &, const QItemSelection &)));
+	connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(slotCopiarTabela()));
+	//connect(this->ui->pushButtonPaste, SIGNAL(clicked()), this, SLOT(slotTablePaste()));
 
 	//slots para o chart
 	connect(this->ui->pushButton_updateChart, SIGNAL(clicked()), this, SLOT(slotAtualizaChart()));
-
 
 }
 
@@ -254,6 +255,16 @@ void MainWindow::slotLoadTransaction(const QItemSelection &, const QItemSelectio
 	qDebug() << "oi selecao";
 }
 
+void MainWindow::slotTablePaste()
+{
+	//pegando os itens selecionados
+	QAbstractItemModel * model = this->ui->tableView->model();
+	QItemSelectionModel * selection = this->ui->tableView->selectionModel();
+	QModelIndexList indexes = selection->selectedIndexes();
+
+	
+}
+
 void MainWindow::slotAddZeros(QTableView * table)
 {
 	//Pesquisando a tabela para captura os valores de x e y
@@ -271,7 +282,36 @@ void MainWindow::slotAddZeros(QTableView * table)
 
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event) 
+{
 
+	QModelIndexList selectedRows = this->ui->tableView->selectionModel()->selectedRows();
+	// at least one entire row selected
+	if (!selectedRows.isEmpty()) {
+		if (event->key() == Qt::Key_Insert)
+			this->ui->tableView->model()->insertRows(selectedRows.at(0).row(),
+				selectedRows.size());
+		else if (event->key() == Qt::Key_Delete)
+			this->ui->tableView->model()->removeRows(selectedRows.at(0).row(),
+				selectedRows.size());
+	}
+
+
+	// at least one cell selected
+	/*QList<QModelIndex> indexes = this->ui->tableView->model()->selectedIndexes();
+	if (!indexes.isEmpty()) {
+		if (event->key() == Qt::Key_Delete) {
+			for (QModelIndex index : selectedIndexes())
+			{
+				this->ui->tableView()->model()->setData(index, QString());
+			}
+		}
+	}*/
+
+
+
+
+}
 
 
 //this->ui->tableView->model()->setData(this->ui->tableView->model()->index(0, 0), contactNames.at(0));

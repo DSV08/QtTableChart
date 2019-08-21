@@ -5,7 +5,8 @@
 //https://forum.qt.io/topic/62375/reading-a-value-from-tableview
 //https://stackoverflow.com/questions/42487645/creating-a-qmodelindex
 
-
+//https://www.walletfox.com/course/qtableviewcopypaste.php
+//https://stackoverflow.com/questions/1230222/selected-rows-in-qtableview-copy-to-qclipboard
 #pragma once
 #include <QtWidgets/QMainWindow>
 #include "ui_MainWindow.h"
@@ -105,6 +106,9 @@ private:
     */
     void desenhaChart(QList<QPointF> ptos);
 
+
+	void keyPressEvent(QKeyEvent *event);
+
 	private slots:
 
 	/*!
@@ -140,6 +144,9 @@ private:
 	void slotLoadTransaction(const QItemSelection &, const QItemSelection &);
 
 	void slotAddZeros(QTableView *table);
+
+
+	void slotTablePaste();
 
 signals:
 
