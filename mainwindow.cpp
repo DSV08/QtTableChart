@@ -5,16 +5,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	//exibindo a interface
 	ui->setupUi(this);
 
-
-
-
 	//criando minha tabela inicial
 	this->criarTabela();
-
-
-	//Configura a tabela para que os dados de entrada sejam doubles
-	this->ui->tableView->setItemDelegate(new TableDelegate());
-
+			
 
 	//configura o grafico inicial
 	this->configureChart();
@@ -23,6 +16,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	//criando os connets da app
 	this->criarConects();
+
+
+	//Configura a tabela para que os dados de entrada sejam doubles
+	TableDelegate *itDelegate = new TableDelegate;
+	this->ui->tableView->setItemDelegate(itDelegate);
+
+
 
 	///////////////////////////////////////////////
 
@@ -64,6 +64,9 @@ void MainWindow::criarConects()
 	connect(this->ui->pushButton_addLinha, SIGNAL(clicked()), this, SLOT(slotAddLinha()));
 	connect(this->ui->pushButton_removeLinha, SIGNAL(clicked()), this, SLOT(slotRemoveLinha()));
 	connect(this->ui->pushButton_removeLinhaIndice, SIGNAL(clicked()), this, SLOT(slotRemoverLinhaPorIndice()));
+	connect(this->ui->pushButtonRemoverTudo, SIGNAL(clicked()), this, SLOT(slotRemoverTudo()));
+	connect(this->ui->pushButtonImportarArquivo, SIGNAL(clicked()), this, SLOT(slotImportarArquivo()));
+	connect(this->ui->pushButtonExportarArquivo, SIGNAL(clicked()), this, SLOT(slotExportarArquivo()));
 
 
 	connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
@@ -75,6 +78,7 @@ void MainWindow::criarConects()
 	//slots para o chart
 	connect(this->ui->pushButton_updateChart, SIGNAL(clicked()), this, SLOT(slotAtualizaChart()));
 
+
 }
 
 
@@ -82,6 +86,7 @@ void MainWindow::criarConects()
 void MainWindow::criarTabela(int _row, int _col) 
 {
 	QStandardItemModel *model = new QStandardItemModel(_row, _col, this);
+
 	this->ui->tableView->setModel(model);
 	this->ui->tableView->model()->setHeaderData(0, Qt::Horizontal, tr("x"));
 	this->ui->tableView->model()->setHeaderData(1, Qt::Horizontal, tr("y"));
@@ -124,13 +129,13 @@ void MainWindow::slotAddLinha()
 	}
 	else
 	{
-		this->row = this->ui->tableView->model()->rowCount();
+		
 		this->ui->tableView->model()->insertRow(this->row);	
 	
-		//this->slotAddZeros(this->ui->tableView);
-
 		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 0), 0);
 		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 1), 0);
+	
+		this->row = this->ui->tableView->model()->rowCount();
 	}
 	
 }
@@ -206,7 +211,7 @@ void MainWindow::desenhaChart(QList<QPointF> ptos)
 
 	chart->legend()->hide();
 	chart->setTitle("Titulo do Grafico");
-	chart->setAnimationOptions(QChart::AllAnimations);
+	//chart->setAnimationOptions(QChart::AllAnimations);
 	chart->createDefaultAxes();
 
 	this->ui->chartview->setChart(chart);
@@ -240,6 +245,24 @@ void MainWindow::slotRemoverLinhaPorIndice()
 		this->row = ui->tableView->model()->rowCount();
 	}
 	this->slotAtualizaChart();
+}
+
+
+void MainWindow::slotRemoverTudo()
+{
+	this->ui->tableView->model()->removeRows(0, this->ui->tableView->model()->rowCount());
+}
+
+
+void MainWindow::slotImportarArquivo()
+{
+
+}
+
+
+void MainWindow::slotExportarArquivo()
+{
+
 }
 
 
@@ -285,7 +308,7 @@ void MainWindow::slotAddZeros(QTableView * table)
 void MainWindow::keyPressEvent(QKeyEvent *event) 
 {
 
-	QModelIndexList selectedRows = this->ui->tableView->selectionModel()->selectedRows();
+	/*QModelIndexList selectedRows = this->ui->tableView->selectionModel()->selectedRows();
 	// at least one entire row selected
 	if (!selectedRows.isEmpty()) {
 		if (event->key() == Qt::Key_Insert)
@@ -298,18 +321,118 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 
 	// at least one cell selected
-	/*QList<QModelIndex> indexes = this->ui->tableView->model()->selectedIndexes();
+	QList<QModelIndex> indexes = this->ui->tableView->selectedIndexes();
 	if (!indexes.isEmpty()) {
 		if (event->key() == Qt::Key_Delete) {
-			for (QModelIndex index : selectedIndexes())
+			for (QModelIndex index : indexes)
 			{
-				this->ui->tableView()->model()->setData(index, QString());
+				this->ui->tableView->model()->setData(index, QString());
 			}
 		}
 	}*/
 
 
 
+
+
+		// If Ctrl-C typed
+		/*if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier))
+		{
+			QModelIndexList cells = this->ui->tableView->selectionModel()->selectedIndexes();
+			qSort(cells); // Necessary, otherwise they are in column order
+
+			QString text;
+			int currentRow = 0; // To determine when to insert newlines
+			foreach(const QModelIndex& cell, cells) {
+				if (text.length() == 0) {
+					// First item
+				}
+				else if (cell.row() != currentRow) {
+					// New row
+					text += '\n';
+				}
+				else {
+					// Next cell
+					text += '\t';
+				}
+				currentRow = cell.row();
+				text += cell.data().toString();
+			}
+
+			QApplication::clipboard()->setText(text);
+		}*/
+
+
+
+
+	QModelIndexList selectedRows = this->ui->tableView->selectionModel()->selectedRows();
+
+	// at least one entire row selected
+	if (!selectedRows.isEmpty()) {
+		if (event->key() == Qt::Key_Insert)
+			this->ui->tableView->model()->insertRows(selectedRows.at(0).row(),
+				selectedRows.size());
+		else if (event->key() == Qt::Key_Delete)
+			this->ui->tableView->model()->removeRows(selectedRows.at(0).row(),
+				selectedRows.size());
+	}
+	// at least one cell selected
+	QList<QModelIndex> indexes = this->ui->tableView->selectionModel()->selectedIndexes();
+	if (!indexes.isEmpty()) {
+		if (event->key() == Qt::Key_Delete) {
+			foreach(QModelIndex index, indexes)
+				this->ui->tableView->model()->setData(index, QString());
+		}
+		else if (event->matches(QKeySequence::Copy)) {
+			QString text;
+			QItemSelectionRange range = this->ui->tableView->selectionModel()->selection().first();
+			for (auto i = range.top(); i <= range.bottom(); ++i)
+			{
+				QStringList rowContents;
+				for (auto j = range.left(); j <= range.right(); ++j)
+					rowContents << this->ui->tableView->model()->index(i, j).data().toString();
+				text += rowContents.join("\t");
+				text += "\n";
+			}
+			QApplication::clipboard()->setText(text);
+		}
+		else if (event->matches(QKeySequence::Paste)) {
+			
+
+			QString text = QApplication::clipboard()->text();
+			QStringList rowContents = text.split("\n", QString::SkipEmptyParts);
+
+			//criando as linhas da tabela de acordo com o dado que estou copiando
+			if(this->row < rowContents.size())
+			{
+				
+				int rowsAdd = rowContents.size() - this->row;
+				for (int i = 0; i < rowsAdd ;i++)
+				{
+					this->slotAddLinha();
+				}
+			}
+			
+
+			QModelIndex initIndex = indexes.at(0);
+			auto initRow = initIndex.row();
+			auto initCol = initIndex.column();
+
+			for (auto i = 0; i < rowContents.size(); ++i) {
+				QStringList columnContents = rowContents.at(i).split("\t");
+				this->ui->tableView->blockSignals(true);
+				for (auto j = 0; j < columnContents.size(); ++j) {
+					this->ui->tableView->model()->setData(this->ui->tableView->model()->index(initRow + i, initCol + j), columnContents.at(j));
+				}
+				this->ui->tableView->blockSignals(false);
+			}
+
+
+
+		}
+		//else
+			//QTableView::keyPressEvent(event);
+	}
 
 }
 

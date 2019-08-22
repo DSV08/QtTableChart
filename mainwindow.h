@@ -138,6 +138,12 @@ private:
 	 */
 	void slotRemoverLinhaPorIndice();
 
+	void slotRemoverTudo();
+
+	void slotImportarArquivo();
+
+	void slotExportarArquivo();
+
 
 	void slotTableChangeditemChanged(QModelIndex topLeft, QModelIndex bottomRight);
 
