@@ -51,6 +51,23 @@ public:
 	*/
 	~MainWindow();
 
+
+    /*!
+     * @brief Método Set.
+     * Método que guarda o caminho do arquivo que é editado
+     * @param arquivoCorrente Variavel com o caminho do arquivo que é editado.
+     * @return void
+     */
+    void setArquivoCorrente(QString arquivoCorrente);
+
+
+    /*!
+     * @brief Método Get.
+     * Método para obter o caminho do arquivo que é editado
+     * @return QString retona o caminho do arquivo texto que esta em uso
+     */
+    QString getArquivoCorrente();
+
 private:
 	QChart *chart;;
 	QChartView *chartView;
@@ -64,6 +81,12 @@ private:
 	* @brief Variavel para armazenar o numero de colunas da tabela
 	*/
 	int col = 2;
+
+    /*!
+    * @brief Caminho do Arquivo em uso
+    * Variavel global que armazena o caminho do arquivo que está sendo editado
+    */
+    QString currentFileName;
 
 
 	//QStandardItemModel *model;
@@ -91,6 +114,14 @@ private:
 	*/
 	void criarTabela(int row=0, int col=2);
 
+
+    /*!
+     * @brief Salvar
+     * Método para salvar o texto do bloco de notas em um arquivo em uso ou em um novo arquivo
+     *  que será criado caso não tenha um arquivo em uso
+     */
+    //metodo para salvar os tipos de arquivo conforme escolhido pelo usuario, chamdo pelo slot save
+    void salvarArquivo();
 
 
 	/*!

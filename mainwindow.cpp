@@ -255,14 +255,83 @@ void MainWindow::slotRemoverTudo()
 
 
 void MainWindow::slotImportarArquivo()
-{
+{ 
+    //Pegando o arquivo que será aberto
+     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), tr("Texto (*.txt)"));
+     this->ui->textEdit->clear();
 
+     if (fileName.isEmpty())
+     {
+         return;
+     }
+     else {
+
+         //Exibindo o arquivo que será aberto no textEdit
+         QFile file(fileName);
+         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+             return;
+         else
+         {
+
+             QTextStream in(&file);
+             while (!in.atEnd())
+             {
+                 this->ui->textEdit->append(in.readLine());
+             }
+             file.close();
+
+             //definindo o nome do arquivo como corrente
+             this->setArquivoCorrente(fileName);
+
+         }
+
+
+     }
 }
 
 
 void MainWindow::slotExportarArquivo()
 {
+    if (this->getArquivoCorrente().isEmpty())
+    {
+        //perguntado ao usuario onde ele quer salvar o arquivo
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Importar Arquivo"), QDir::homePath(), tr("CSV (*.csv) );
 
+        if (!fileName.isEmpty()) {
+            this->setArquivoCorrente(fileName);
+
+            //chamando o metodo de salvar o arquivo
+            this->salvarArquivo();
+        }
+        else
+        {
+            return;
+        }
+    }
+    else {
+
+        //chamando o metodo de salvar o arquivo
+        this->salvarArquivo();
+    }
+}
+
+
+void MainWindow::salvarArquivo()
+{
+    QFileInfo tipoArquivo(this->getArquivoCorrente());
+    QFile arquivo(this->getArquivoCorrente());
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    else {
+
+        QTextStream out(&file);
+        out << text;
+
+        // optional, as QFile destructor will already do it:
+        file.close();
+    }
 }
 
 
