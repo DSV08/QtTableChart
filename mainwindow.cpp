@@ -58,6 +58,17 @@ MainWindow::~MainWindow()
 	//delete ui;
 }
 
+//Método Set que guarda o caminho do arquivo que é editado
+void MainWindow::setArquivoCorrente(QString arquivoCorrente)
+{
+}
+
+//Método para obter o caminho do arquivo que é editado
+QString MainWindow::getArquivoCorrente()
+{
+	return QString();
+}
+
 void MainWindow::criarConects()
 {
 	//slots para tabela
@@ -72,7 +83,11 @@ void MainWindow::criarConects()
 	connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
 
 	connect(this->ui->tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), SLOT(slotLoadTransaction(const QItemSelection &, const QItemSelection &)));
+	
+	
 	connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(slotCopiarTabela()));
+	
+	
 	//connect(this->ui->pushButtonPaste, SIGNAL(clicked()), this, SLOT(slotTablePaste()));
 
 	//slots para o chart
@@ -168,27 +183,25 @@ void MainWindow::slotAtualizaChart()
 	QList<QPointF> ptos;
 	ptos.clear();
 
-	if (_rows > 0) {
+	//pesquisando na tabela para capturar os pontos x e y
+	for (int i = 0; i < _rows; i++)
+	{
+		QPointF p;
+		double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
+		double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toDouble();
 
-		//pesquisando na tabela para capturar os pontos x e y
-		for (int i = 0; i < _rows; i++)
-		{
-			QPointF p;
-			double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
-			double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toDouble();
+		//Adicionando os ptos x e y a minha lista de pontosB
+		p.setX(x);
+		p.setY(y);
+		ptos.append(p);
 
-			//Adicionando os ptos x e y a minha lista de pontosB
-			p.setX(x);
-			p.setY(y);
-			ptos.append(p);
-
-		}
-
-		//
-		// CRIANDO O CHART COM OS DADOS DA TABELA
-		//	
-		this->desenhaChart(ptos);
 	}
+
+	//
+	// CRIANDO O CHART COM OS DADOS DA TABELA
+	//	
+	this->desenhaChart(ptos);
+
 
 }
 
@@ -247,106 +260,143 @@ void MainWindow::slotRemoverLinhaPorIndice()
 	this->slotAtualizaChart();
 }
 
-
+//slot para remover todas as linhas da tabela
 void MainWindow::slotRemoverTudo()
 {
 	this->ui->tableView->model()->removeRows(0, this->ui->tableView->model()->rowCount());
+	this->row = this->ui->tableView->model()->rowCount();
+	this->slotAtualizaChart();
 }
 
 
 void MainWindow::slotImportarArquivo()
 { 
-    //Pegando o arquivo que será aberto
-     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), tr("Texto (*.txt)"));
-     this->ui->textEdit->clear();
+	//Pegando o arquivo que será aberto
+	 QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), tr("Csv (*.csv)"));
+	 
+	 if (fileName.isEmpty())
+	 {
+		 return;
+	 }
+	 else {
 
-     if (fileName.isEmpty())
-     {
-         return;
-     }
-     else {
+		 //Exibindo o arquivo que será aberto no textEdit
+		 QFile file(fileName);
+		 if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			 return;
+		 else
+		 {
 
-         //Exibindo o arquivo que será aberto no textEdit
-         QFile file(fileName);
-         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-             return;
-         else
-         {
-
-             QTextStream in(&file);
-             while (!in.atEnd())
-             {
-                 this->ui->textEdit->append(in.readLine());
-             }
-             file.close();
-
-             //definindo o nome do arquivo como corrente
-             this->setArquivoCorrente(fileName);
-
-         }
+			 //removendo todas as linhas da tabela
+			 this->slotRemoverTudo();
 
 
-     }
+			 QTextStream in(&file);
+			 int i = 0;
+			 disconnect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
+			 while (!in.atEnd())
+			 {
+				 QString linha = in.readLine();
+				 QStringList lista = linha.split(',');
+				 if (!this->ui->tableView->model()->hasIndex(i, 0))
+					 this->slotAddLinha();
+
+				 bool a = this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, 0), lista[0]);
+				 bool b = this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, 1), lista[1]);
+				 i++;
+				 //this->ui->textEdit->append(in.readLine());
+			 }
+			 connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
+			 file.close();
+		 }
+
+
+	 }
+
+	 //chamada para atualizacao do grafico
+	 this->slotAtualizaChart();
 }
 
 
 void MainWindow::slotExportarArquivo()
 {
-    if (this->getArquivoCorrente().isEmpty())
-    {
-        //perguntado ao usuario onde ele quer salvar o arquivo
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Importar Arquivo"), QDir::homePath(), tr("CSV (*.csv) );
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Importar Arquivo"), QDir::homePath(), tr("CSV (*.csv) "));
+	QFile file(fileName);
 
-        if (!fileName.isEmpty()) {
-            this->setArquivoCorrente(fileName);
+	if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		QTextStream out(&file);
 
-            //chamando o metodo de salvar o arquivo
-            this->salvarArquivo();
-        }
-        else
-        {
-            return;
-        }
-    }
-    else {
+		for (int i = 0; i < this->row; i++)
+		{
 
-        //chamando o metodo de salvar o arquivo
-        this->salvarArquivo();
-    }
+			out << this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toString() << ",";
+			out << this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toString() << "\n";
+
+		}
+
+	}
+	else
+		return;
+	this->slotAtualizaChart();
+
+
+	/*if (this->getArquivoCorrente().isEmpty())
+	{
+		//perguntado ao usuario onde ele quer salvar o arquivo
+		QString fileName = QFileDialog::getSaveFileName(this, tr("Importar Arquivo"), QDir::homePath(), tr("CSV (*.csv) "));
+
+		if (!fileName.isEmpty()) {
+			this->setArquivoCorrente(fileName);
+
+			//chamando o metodo de salvar o arquivo
+			this->salvarArquivo();
+		}
+		else
+		{
+			return;
+		}
+	}
+	else {
+
+		//chamando o metodo de salvar o arquivo
+		this->salvarArquivo();
+	}*/
+
 }
 
 
 void MainWindow::salvarArquivo()
 {
-    QFileInfo tipoArquivo(this->getArquivoCorrente());
-    QFile arquivo(this->getArquivoCorrente());
+	QFileInfo tipoArquivo(this->getArquivoCorrente());
+	QFile arquivo(this->getArquivoCorrente());
 
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-    else {
-
-        QTextStream out(&file);
-        out << text;
-
-        // optional, as QFile destructor will already do it:
-        file.close();
-    }
+ //   //QFile file(fileName);
+ //   
+//	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+ //       return;
+ //   else {
+ //
+ //       QTextStream out(&file);
+ //       //out << text;
+ //
+ //       // optional, as QFile destructor will already do it:
+ //       file.close();
+ //   }
 }
 
-
+//
 void MainWindow::slotTableChangeditemChanged( QModelIndex topLeft,  QModelIndex bottomRight)
 {
-	
 	this->slotAtualizaChart();
-
 }
-
+//
 void MainWindow::slotLoadTransaction(const QItemSelection &, const QItemSelection &)
 {
 	qDebug() << "oi selecao";
 }
 
+//
 void MainWindow::slotTablePaste()
 {
 	//pegando os itens selecionados
@@ -357,6 +407,7 @@ void MainWindow::slotTablePaste()
 	
 }
 
+//
 void MainWindow::slotAddZeros(QTableView * table)
 {
 	//Pesquisando a tabela para captura os valores de x e y
@@ -374,65 +425,9 @@ void MainWindow::slotAddZeros(QTableView * table)
 
 }
 
+//Metodo para capturar eventos de teclado
 void MainWindow::keyPressEvent(QKeyEvent *event) 
 {
-
-	/*QModelIndexList selectedRows = this->ui->tableView->selectionModel()->selectedRows();
-	// at least one entire row selected
-	if (!selectedRows.isEmpty()) {
-		if (event->key() == Qt::Key_Insert)
-			this->ui->tableView->model()->insertRows(selectedRows.at(0).row(),
-				selectedRows.size());
-		else if (event->key() == Qt::Key_Delete)
-			this->ui->tableView->model()->removeRows(selectedRows.at(0).row(),
-				selectedRows.size());
-	}
-
-
-	// at least one cell selected
-	QList<QModelIndex> indexes = this->ui->tableView->selectedIndexes();
-	if (!indexes.isEmpty()) {
-		if (event->key() == Qt::Key_Delete) {
-			for (QModelIndex index : indexes)
-			{
-				this->ui->tableView->model()->setData(index, QString());
-			}
-		}
-	}*/
-
-
-
-
-
-		// If Ctrl-C typed
-		/*if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier))
-		{
-			QModelIndexList cells = this->ui->tableView->selectionModel()->selectedIndexes();
-			qSort(cells); // Necessary, otherwise they are in column order
-
-			QString text;
-			int currentRow = 0; // To determine when to insert newlines
-			foreach(const QModelIndex& cell, cells) {
-				if (text.length() == 0) {
-					// First item
-				}
-				else if (cell.row() != currentRow) {
-					// New row
-					text += '\n';
-				}
-				else {
-					// Next cell
-					text += '\t';
-				}
-				currentRow = cell.row();
-				text += cell.data().toString();
-			}
-
-			QApplication::clipboard()->setText(text);
-		}*/
-
-
-
 
 	QModelIndexList selectedRows = this->ui->tableView->selectionModel()->selectedRows();
 
@@ -467,14 +462,15 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 		}
 		else if (event->matches(QKeySequence::Paste)) {
 			
+			//desconectando o sinal de atualizacao na tabela
+			disconnect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
 
 			QString text = QApplication::clipboard()->text();
 			QStringList rowContents = text.split("\n", QString::SkipEmptyParts);
 
 			//criando as linhas da tabela de acordo com o dado que estou copiando
 			if(this->row < rowContents.size())
-			{
-				
+			{	
 				int rowsAdd = rowContents.size() - this->row;
 				for (int i = 0; i < rowsAdd ;i++)
 				{
@@ -487,22 +483,84 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 			auto initRow = initIndex.row();
 			auto initCol = initIndex.column();
 
+			
+			//loop para inserir dados copiados na tabela criada
 			for (auto i = 0; i < rowContents.size(); ++i) {
 				QStringList columnContents = rowContents.at(i).split("\t");
 				this->ui->tableView->blockSignals(true);
-				for (auto j = 0; j < columnContents.size(); ++j) {
+				for (auto j = 0; j < columnContents.size(); ++j) 
+				{
+					//inserindo dados na tabela atual
 					this->ui->tableView->model()->setData(this->ui->tableView->model()->index(initRow + i, initCol + j), columnContents.at(j));
 				}
 				this->ui->tableView->blockSignals(false);
 			}
 
+			//conectando o sinal de atualizacao na tabela
+			connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
 
 
 		}
 		//else
 			//QTableView::keyPressEvent(event);
+
+		//atualizando a tabela inicial
+		this->slotAtualizaChart();
 	}
 
+
+	/***********************************************************************************
+	/*QModelIndexList selectedRows = this->ui->tableView->selectionModel()->selectedRows();
+	// at least one entire row selected
+	if (!selectedRows.isEmpty()) {
+	if (event->key() == Qt::Key_Insert)
+	this->ui->tableView->model()->insertRows(selectedRows.at(0).row(),
+	selectedRows.size());
+	else if (event->key() == Qt::Key_Delete)
+	this->ui->tableView->model()->removeRows(selectedRows.at(0).row(),
+	selectedRows.size());
+	}
+
+
+	// at least one cell selected
+	QList<QModelIndex> indexes = this->ui->tableView->selectedIndexes();
+	if (!indexes.isEmpty()) {
+	if (event->key() == Qt::Key_Delete) {
+	for (QModelIndex index : indexes)
+	{
+	this->ui->tableView->model()->setData(index, QString());
+	}
+	}
+	}*/
+
+	// If Ctrl-C typed
+	/*if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier))
+	{
+	QModelIndexList cells = this->ui->tableView->selectionModel()->selectedIndexes();
+	qSort(cells); // Necessary, otherwise they are in column order
+
+	QString text;
+	int currentRow = 0; // To determine when to insert newlines
+	foreach(const QModelIndex& cell, cells) {
+	if (text.length() == 0) {
+	// First item
+	}
+	else if (cell.row() != currentRow) {
+	// New row
+	text += '\n';
+	}
+	else {
+	// Next cell
+	text += '\t';
+	}
+	currentRow = cell.row();
+	text += cell.data().toString();
+	}
+
+	QApplication::clipboard()->setText(text);
+	}
+	
+	*/
 }
 
 

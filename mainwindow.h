@@ -52,21 +52,18 @@ public:
 	~MainWindow();
 
 
-    /*!
-     * @brief Método Set.
-     * Método que guarda o caminho do arquivo que é editado
-     * @param arquivoCorrente Variavel com o caminho do arquivo que é editado.
-     * @return void
-     */
-    void setArquivoCorrente(QString arquivoCorrente);
+	/*!
+	 * @brief Método Set que guarda o caminho do arquivo que é editado
+	 * @param arquivoCorrente Variavel com o caminho do arquivo que é editado.
+	 * @return void
+	 */
+	void setArquivoCorrente(QString arquivoCorrente);
 
-
-    /*!
-     * @brief Método Get.
-     * Método para obter o caminho do arquivo que é editado
-     * @return QString retona o caminho do arquivo texto que esta em uso
-     */
-    QString getArquivoCorrente();
+	/*!
+	 * @brief Método para obter o caminho do arquivo que é editado
+	 * @return QString
+	 */
+	QString getArquivoCorrente();
 
 private:
 	QChart *chart;;
@@ -82,11 +79,11 @@ private:
 	*/
 	int col = 2;
 
-    /*!
-    * @brief Caminho do Arquivo em uso
-    * Variavel global que armazena o caminho do arquivo que está sendo editado
-    */
-    QString currentFileName;
+	/*!
+	* @brief Caminho do Arquivo em uso
+	* Variavel global que armazena o caminho do arquivo que está sendo editado
+	*/
+	QString currentFileName;
 
 
 	//QStandardItemModel *model;
@@ -114,28 +111,25 @@ private:
 	*/
 	void criarTabela(int row=0, int col=2);
 
-
-    /*!
-     * @brief Salvar
-     * Método para salvar o texto do bloco de notas em um arquivo em uso ou em um novo arquivo
-     *  que será criado caso não tenha um arquivo em uso
-     */
-    //metodo para salvar os tipos de arquivo conforme escolhido pelo usuario, chamdo pelo slot save
-    void salvarArquivo();
-
+	/*!
+	 * @brief Salvar
+	 * Método para salvar o texto do bloco de notas em um arquivo em uso ou em um novo arquivo
+	 *  que será criado caso não tenha um arquivo em uso
+	 */
+	//metodo para salvar os tipos de arquivo conforme escolhido pelo usuario, chamdo pelo slot save
+	void salvarArquivo();
 
 	/*!
 	* @brief Configura o Chart Inicial
 	*/
 	void configureChart();
 
-
-    /*!
-    *@brief Desenha o Chart
-    * Desenha o gráfico com os pontos recebidos
-    * @param Ptos Lista com os pontos que serão utilizados para formar o gráfico
-    */
-    void desenhaChart(QList<QPointF> ptos);
+	/*!
+	*@brief Desenha o Chart
+	* Desenha o gráfico com os pontos recebidos
+	* @param Ptos Lista com os pontos que serão utilizados para formar o gráfico
+	*/
+	void desenhaChart(QList<QPointF> ptos);
 
 
 	void keyPressEvent(QKeyEvent *event);
@@ -169,20 +163,46 @@ private:
 	 */
 	void slotRemoverLinhaPorIndice();
 
+	/*!
+	* @brief Slot para...
+	* Esse slot....
+	*/
 	void slotRemoverTudo();
 
+	/*!
+	* @brief Slot para...
+	* Esse slot....
+	*/
 	void slotImportarArquivo();
 
+	/*!
+	* @brief Slot para...
+	* Esse slot....
+	*/
 	void slotExportarArquivo();
 
-
+	/*!
+	* @brief Slot para...
+	* Esse slot....
+	*/
 	void slotTableChangeditemChanged(QModelIndex topLeft, QModelIndex bottomRight);
 
+	/*!
+	* @brief Slot para...
+	* Esse slot....
+	*/
 	void slotLoadTransaction(const QItemSelection &, const QItemSelection &);
 
+	/*!
+	* @brief Slot para...
+	* Esse slot....
+	*/
 	void slotAddZeros(QTableView *table);
 
-
+	/*!
+	* @brief Slot para...
+	* Esse slot....
+	*/
 	void slotTablePaste();
 
 signals:
