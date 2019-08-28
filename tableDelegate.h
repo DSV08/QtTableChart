@@ -12,6 +12,7 @@ public:
 		QLineEdit *lineEdit = new QLineEdit(parent);
 		// Set validator
 		QDoubleValidator *validator = new QDoubleValidator(lineEdit);
+		//validator->setNotation(QDoubleValidator::StandardNotation);
 		lineEdit->setValidator(validator);
 		return lineEdit;
 	}

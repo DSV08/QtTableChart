@@ -144,10 +144,23 @@ private:
 
 
 	/*!
+	* @brief Slot adicionar coluna
+	* Esse slot é excecutado quando o botão adicionar coluna é clicado, adicionando uma coluna na tabela
+	*/
+	void slotAddColuna();
+
+	/*!
 	* @brief Slot remover linha
 	* Esse slot é excecutado quando o botão remover linha é clicado, eliminando  uma linha na tabela
 	*/
 	void slotRemoveLinha();
+
+
+	/*!
+	* @brief Slot remover coluna
+	* Esse slot é excecutado quando o botão remover coluna é clicado, eliminando  uma coluna na tabela
+	*/
+	void slotRemoveColuna();
 
 
 	/*!
@@ -195,18 +208,17 @@ private:
 
 	/*!
 	* @brief Slot para...
-	* Esse slot....
+	* @param table ...
 	*/
 	void slotAddZeros(QTableView *table);
 
 	/*!
 	* @brief Slot para...
-	* Esse slot....
 	*/
 	void slotTablePaste();
 
 signals:
 
-	void sinal();
+
 };
 

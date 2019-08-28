@@ -73,7 +73,9 @@ void MainWindow::criarConects()
 {
 	//slots para tabela
 	connect(this->ui->pushButton_addLinha, SIGNAL(clicked()), this, SLOT(slotAddLinha()));
+	connect(this->ui->pushButtonadicionaColuna, SIGNAL(clicked()), this, SLOT(slotAddColuna()));
 	connect(this->ui->pushButton_removeLinha, SIGNAL(clicked()), this, SLOT(slotRemoveLinha()));
+	connect(this->ui->pushButtonremoverColuna, SIGNAL(clicked()), this, SLOT(slotRemoveColuna()));
 	connect(this->ui->pushButton_removeLinhaIndice, SIGNAL(clicked()), this, SLOT(slotRemoverLinhaPorIndice()));
 	connect(this->ui->pushButtonRemoverTudo, SIGNAL(clicked()), this, SLOT(slotRemoverTudo()));
 	connect(this->ui->pushButtonImportarArquivo, SIGNAL(clicked()), this, SLOT(slotImportarArquivo()));
@@ -104,7 +106,13 @@ void MainWindow::criarTabela(int _row, int _col)
 
 	this->ui->tableView->setModel(model);
 	this->ui->tableView->model()->setHeaderData(0, Qt::Horizontal, tr("x"));
-	this->ui->tableView->model()->setHeaderData(1, Qt::Horizontal, tr("y"));
+	for (int j = 0; j < this->col; j++)
+	{
+		this->ui->tableView->model()->setHeaderData(j, Qt::Horizontal, tr("y" + j));
+	}
+	//this->ui->tableView->model()->setHeaderData(0, Qt::Horizontal, tr("x"));
+	//this->ui->tableView->model()->setHeaderData(1, Qt::Horizontal, tr("y"));
+	//this->ui->tableView->model()->setHeaderData(2, Qt::Horizontal, tr("y2"));
 
 	//this->model = new QStandardItemModel(_row, _col, this);
 	// Create model:
@@ -147,12 +155,42 @@ void MainWindow::slotAddLinha()
 		
 		this->ui->tableView->model()->insertRow(this->row);	
 	
-		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 0), 0);
-		this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 1), 0);
+		for (int j = 0; j < this->col; j++)
+		{
+			this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, j), 0);
+		}
+		//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 0), 0);
+		//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 1), 0);
+		//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 2), 0);
 	
 		this->row = this->ui->tableView->model()->rowCount();
 	}
 	
+}
+
+
+void MainWindow::slotAddColuna()
+{
+	if (this->ui->tableView->model() == nullptr)
+	{
+		this->criarTabela(this->row, this->col);
+	}
+	else
+	{
+
+		this->ui->tableView->model()->insertColumn(this->col);
+
+		for (int i = 0; i < this->row; i++)
+		{
+			this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i,this->col), 0);
+		}
+		//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 0), 0);
+		//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 1), 0);
+		//this->ui->tableView->model()->setData(this->ui->tableView->model()->index(this->row, 2), 0);
+
+		this->col = this->ui->tableView->model()->columnCount();
+	}
+
 }
 
 
@@ -168,6 +206,22 @@ void MainWindow::slotRemoveLinha()
 	
 		QMessageBox::warning(this, "Warning", "Tabela Vazia");
 	
+	}
+}
+
+
+void MainWindow::slotRemoveColuna()
+{
+	if (this->col > 2) {
+
+		this->ui->tableView->model()->removeColumn(this->ui->tableView->model()->columnCount() - 1);
+		this->col = this->ui->tableView->model()->columnCount();
+		this->slotAtualizaChart();
+	}
+	else {
+
+		QMessageBox::warning(this, "Warning", "Tabela Com o Tamanho Mínimo");
+
 	}
 }
 
@@ -298,6 +352,12 @@ void MainWindow::slotImportarArquivo()
 			 {
 				 QString linha = in.readLine();
 				 QStringList lista = linha.split(',');
+				 if (lista.size() != 2)
+				 {
+					 QMessageBox::information(this,"ERRO", "Não foi possível abrir o arquivo!");
+					 this->slotRemoverTudo();
+					 break;
+				 }
 				 if (!this->ui->tableView->model()->hasIndex(i, 0))
 					 this->slotAddLinha();
 
@@ -491,14 +551,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 				for (auto j = 0; j < columnContents.size(); ++j) 
 				{
 					//inserindo dados na tabela atual
-					this->ui->tableView->model()->setData(this->ui->tableView->model()->index(initRow + i, initCol + j), columnContents.at(j));
+					this->ui->tableView->model()->setData(this->ui->tableView->model()->index(initRow + i, initCol + j), columnContents.at(j).toDouble());
 				}
 				this->ui->tableView->blockSignals(false);
 			}
 
 			//conectando o sinal de atualizacao na tabela
 			connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
-
 
 		}
 		//else
