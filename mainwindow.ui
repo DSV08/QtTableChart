@@ -44,14 +44,14 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0">
+      <item row="9" column="0">
        <widget class="QPushButton" name="pushButton_updateChart">
         <property name="text">
          <string>Atualizar Chart</string>
         </property>
        </widget>
       </item>
-      <item row="11" column="0">
+      <item row="13" column="0">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -71,21 +71,21 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0">
+      <item row="7" column="0">
        <widget class="QPushButton" name="pushButtonRemoverTudo">
         <property name="text">
          <string>Remover Tudo</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="0">
+      <item row="10" column="0">
        <widget class="QPushButton" name="pushButtonImportarArquivo">
         <property name="text">
          <string>Importar Arquivo</string>
         </property>
        </widget>
       </item>
-      <item row="9" column="0">
+      <item row="11" column="0">
        <widget class="QPushButton" name="pushButtonExportarArquivo">
         <property name="text">
          <string>Exportar Arquivo</string>
@@ -103,6 +103,13 @@
        <widget class="QPushButton" name="pushButtonremoverColuna">
         <property name="text">
          <string>Remover Coluna</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QPushButton" name="pushButton_removeColunaIndice">
+        <property name="text">
+         <string>Remove Coluna por Indice</string>
         </property>
        </widget>
       </item>

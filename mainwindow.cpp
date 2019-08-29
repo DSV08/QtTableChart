@@ -80,6 +80,7 @@ void MainWindow::criarConects()
 	connect(this->ui->pushButtonRemoverTudo, SIGNAL(clicked()), this, SLOT(slotRemoverTudo()));
 	connect(this->ui->pushButtonImportarArquivo, SIGNAL(clicked()), this, SLOT(slotImportarArquivo()));
 	connect(this->ui->pushButtonExportarArquivo, SIGNAL(clicked()), this, SLOT(slotExportarArquivo()));
+	connect(this->ui->pushButton_removeColunaIndice, SIGNAL(clicked()), this, SLOT(slotRemoverColunaPorIndice()));
 
 
 	connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
@@ -106,9 +107,9 @@ void MainWindow::criarTabela(int _row, int _col)
 
 	this->ui->tableView->setModel(model);
 	this->ui->tableView->model()->setHeaderData(0, Qt::Horizontal, tr("x"));
-	for (int j = 0; j < this->col; j++)
+	for (int j = 1; j < this->col; j++)
 	{
-		this->ui->tableView->model()->setHeaderData(j, Qt::Horizontal, tr("y" + j));
+		this->ui->tableView->model()->setHeaderData(j, Qt::Horizontal, tr("y"));
 	}
 	//this->ui->tableView->model()->setHeaderData(0, Qt::Horizontal, tr("x"));
 	//this->ui->tableView->model()->setHeaderData(1, Qt::Horizontal, tr("y"));
@@ -234,33 +235,57 @@ void MainWindow::slotAtualizaChart()
 	int _cols = this->ui->tableView->model()->columnCount();
 
 	//Criando uma estrutura para armazenar os pontos da tabela
-	QList<QPointF> ptos;
-	ptos.clear();
+	//QList<QPointF> ptos;
+	//ptos.clear();
+
+	//Juntando os pontos em uma lineSeries
+	//QList<QLineSeries> series;
+	QLineSeries* serie = new QLineSeries();
+	
 
 	//pesquisando na tabela para capturar os pontos x e y
-	for (int i = 0; i < _rows; i++)
+	for (int j = 0; j < _rows; j++)
 	{
-		QPointF p;
-		double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
-		double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toDouble();
+		//QLineSeries* serie = new QLineSeries();
+		for (int i = 1; i < _cols; i++)
+		{
+			double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
+			double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, j)).toDouble();
+			serie->append(x, y);
+		}
 
-		//Adicionando os ptos x e y a minha lista de pontosB
-		p.setX(x);
-		p.setY(y);
-		ptos.append(p);
+		//series.append(*serie);
+
+
+		QChart *chart = new QChart();
+		chart->addSeries(serie);
+
+		chart->legend()->hide();
+		chart->setTitle("Titulo do Grafico");
+		//chart->setAnimationOptions(QChart::AllAnimations);
+		chart->createDefaultAxes();
+
+		this->ui->chartview->setChart(chart);
+		this->ui->chartview->update();
+		//serie->clear();
 
 	}
+
+	/*for (QLineSeries* serie : series)
+	{
+
+	}*/
 
 	//
 	// CRIANDO O CHART COM OS DADOS DA TABELA
 	//	
-	this->desenhaChart(ptos);
+	//this->desenhaChart(ptos);
 
 
 }
 
 
-void MainWindow::desenhaChart(QList<QPointF> ptos)
+/*void MainWindow::desenhaChart(QList<QPointF> ptos)
 {
 	//Juntando os pontos em uma lineSeries
 	QLineSeries* series = new QLineSeries();
@@ -271,7 +296,7 @@ void MainWindow::desenhaChart(QList<QPointF> ptos)
 	{
 		series->append(ponto);
 	}
-*/
+*//*
 	//Criando o gráfico a partir dos pontos		
 	QChart *chart = new QChart();
 	chart->addSeries(series);
@@ -283,7 +308,7 @@ void MainWindow::desenhaChart(QList<QPointF> ptos)
 
 	this->ui->chartview->setChart(chart);
 	this->ui->chartview->update();
-}
+}*/
 
 
 
@@ -314,11 +339,28 @@ void MainWindow::slotRemoverLinhaPorIndice()
 	this->slotAtualizaChart();
 }
 
+
+void MainWindow::slotRemoverColunaPorIndice()
+{
+	QItemSelectionModel *selectionModel = this->ui->tableView->selectionModel();
+	QList<QModelIndex> indexes = selectionModel->selectedIndexes();
+
+	for (QModelIndex index : indexes) {
+		selectionModel->model()->removeColumn(index.column());
+		this->col = ui->tableView->model()->columnCount();
+	}
+	this->slotAtualizaChart();
+
+}
+
+
 //slot para remover todas as linhas da tabela
 void MainWindow::slotRemoverTudo()
 {
 	this->ui->tableView->model()->removeRows(0, this->ui->tableView->model()->rowCount());
+	this->ui->tableView->model()->removeColumns(0, this->ui->tableView->model()->columnCount());
 	this->row = this->ui->tableView->model()->rowCount();
+	this->col = this->ui->tableView->model()->columnCount();
 	this->slotAtualizaChart();
 }
 
@@ -352,17 +394,22 @@ void MainWindow::slotImportarArquivo()
 			 {
 				 QString linha = in.readLine();
 				 QStringList lista = linha.split(',');
-				 if (lista.size() != 2)
+				 if (lista.size() > this->col)
 				 {
-					 QMessageBox::information(this,"ERRO", "Não foi possível abrir o arquivo!");
-					 this->slotRemoverTudo();
-					 break;
+					 //QMessageBox::information(this,"ERRO", "Não foi possível abrir o arquivo!");
+					 //this->slotRemoverTudo();
+					 //break;
+					 int diferenca = lista.size() - this->col;
+					 for (int i = 0; i < diferenca; i++)
+						 this->slotAddColuna();
 				 }
 				 if (!this->ui->tableView->model()->hasIndex(i, 0))
 					 this->slotAddLinha();
 
-				 bool a = this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, 0), lista[0]);
-				 bool b = this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, 1), lista[1]);
+				 for (int j = 0; j < lista.size(); j++)
+				 {
+					 this->ui->tableView->model()->setData(this->ui->tableView->model()->index(i, j), lista[j]);
+				 }
 				 i++;
 				 //this->ui->textEdit->append(in.readLine());
 			 }
@@ -389,9 +436,11 @@ void MainWindow::slotExportarArquivo()
 
 		for (int i = 0; i < this->row; i++)
 		{
-
-			out << this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toString() << ",";
-			out << this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 1)).toString() << "\n";
+			for (int j = 0; j < this->col; j++)
+			{
+				out << this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, j)).toString() << ",";
+			}
+			out << "\n";
 
 		}
 

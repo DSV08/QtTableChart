@@ -129,7 +129,7 @@ private:
 	* Desenha o gráfico com os pontos recebidos
 	* @param Ptos Lista com os pontos que serão utilizados para formar o gráfico
 	*/
-	void desenhaChart(QList<QPointF> ptos);
+	//void desenhaChart(QList<QPointF> ptos);
 
 
 	void keyPressEvent(QKeyEvent *event);
@@ -175,6 +175,12 @@ private:
 	 * Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
 	 */
 	void slotRemoverLinhaPorIndice();
+
+	/*!
+	* @brief Slot Remover Linha por índice
+	* Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
+	*/
+	void slotRemoverColunaPorIndice();
 
 	/*!
 	* @brief Slot para...
