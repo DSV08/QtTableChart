@@ -49,6 +49,62 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	
 
+	//teste com lista de line series
+	//Juntando os pontos em uma lineSeries
+	/*QList<QLineSeries*> series;
+
+	QLineSeries *serieTmp = new QLineSeries();
+	serieTmp->append(0, 0);
+	serieTmp->append(1, 1);
+	serieTmp->append(2, 2);
+
+	QLineSeries *serieTmp2 = new QLineSeries();
+	serieTmp2->append(0, 1);
+	serieTmp2->append(1, 2);
+	serieTmp2->append(2, 3);
+
+	series.append(serieTmp);
+	series.append(serieTmp2);
+
+	qDebug() << "serie total:" << series.size();
+	QPointF a =  series.at(0)->at(0);
+	qDebug() << a.rx();
+
+	qDebug() << "serie A:" << series.at(0)->at(0);
+	qDebug() << "serie B:" << series.at(1)->count();
+
+
+	QChart *chart = new QChart();
+
+	chart->legend()->hide();
+	chart->setTitle("Titulo do Grafico");
+	//chart->setAnimationOptions(QChart::AllAnimations);
+	chart->createDefaultAxes();
+
+	QValueAxis *axisX = new QValueAxis;
+	//axisX->setTickCount(this->row);
+	//chart->addAxis(axisX, Qt::AlignBottom);
+
+
+	chart->addSeries(series.at(0));
+	chart->addSeries(series.at(1));
+
+	QValueAxis *axisY = new QValueAxis;
+	axisY->setLinePenColor(series.at(0)->pen().color());
+	axisY->setLinePenColor(series.at(1)->pen().color());
+
+	chart->addAxis(axisY, Qt::AlignLeft);
+	series.at(0)->attachAxis(axisX);
+	series.at(0)->attachAxis(axisY);
+
+	series.at(1)->attachAxis(axisX);
+	series.at(1)->attachAxis(axisY);
+
+
+
+this->ui->chartview->setChart(chart);
+this->ui->chartview->update();*/
+
 }
 	
 	
@@ -229,6 +285,7 @@ void MainWindow::slotRemoveColuna()
 
 void MainWindow::slotAtualizaChart()
 {
+	/*
 	  
 	//Pesquisando a tabela para captura os valores de x e y
 	int _rows = this->ui->tableView->model()->rowCount();
@@ -240,41 +297,80 @@ void MainWindow::slotAtualizaChart()
 
 	//Juntando os pontos em uma lineSeries
 	//QList<QLineSeries> series;
-	QLineSeries* serie = new QLineSeries();
+	QChart *chart = new QChart();
+
+	chart->legend()->hide();
+	chart->setTitle("Titulo do Grafico");
+	//chart->setAnimationOptions(QChart::AllAnimations);
+	chart->createDefaultAxes();
+
+	QValueAxis *axisX = new QValueAxis;
+	//axisX->setTickCount(this->row);
+	chart->addAxis(axisX, Qt::AlignBottom);
 	
 
 	//pesquisando na tabela para capturar os pontos x e y
 	for (int j = 0; j < _rows; j++)
 	{
+
+		QLineSeries* series = new QLineSeries();
 		//QLineSeries* serie = new QLineSeries();
 		for (int i = 1; i < _cols; i++)
 		{
 			double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
 			double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, j)).toDouble();
-			serie->append(x, y);
+			series->append(x, y);
 		}
 
 		//series.append(*serie);
 
 
-		QChart *chart = new QChart();
-		chart->addSeries(serie);
+		chart->addSeries(series);
 
-		chart->legend()->hide();
-		chart->setTitle("Titulo do Grafico");
-		//chart->setAnimationOptions(QChart::AllAnimations);
-		chart->createDefaultAxes();
+		QValueAxis *axisY = new QValueAxis;
+		axisY->setLinePenColor(series->pen().color());
 
-		this->ui->chartview->setChart(chart);
-		this->ui->chartview->update();
+		chart->addAxis(axisY, Qt::AlignLeft);
+		series->attachAxis(axisX);
+		series->attachAxis(axisY);
+
 		//serie->clear();
 
 	}
+
+	this->ui->chartview->setChart(chart);
+	this->ui->chartview->update();
 
 	/*for (QLineSeries* serie : series)
 	{
 
 	}*/
+
+
+	QChart *chart = new QChart();
+	chart->legend()->hide();
+	chart->setTitle("Titulo do Grafico");
+
+	for (int j = 1; j <this->row; j++)
+	{
+
+		QLineSeries* series = new QLineSeries();
+		//QLineSeries* serie = new QLineSeries();
+		for (int i = 0; i <this->col; i++)
+		{
+			double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
+			double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, j)).toDouble();
+			series->append(x, y);
+		}
+
+		chart->addSeries(series);
+	}
+
+	chart->createDefaultAxes();
+	this->ui->chartview->setChart(chart);
+	this->ui->chartview->update();
+
+
 
 	//
 	// CRIANDO O CHART COM OS DADOS DA TABELA
@@ -359,9 +455,12 @@ void MainWindow::slotRemoverTudo()
 {
 	this->ui->tableView->model()->removeRows(0, this->ui->tableView->model()->rowCount());
 	this->ui->tableView->model()->removeColumns(0, this->ui->tableView->model()->columnCount());
-	this->row = this->ui->tableView->model()->rowCount();
-	this->col = this->ui->tableView->model()->columnCount();
+	//this->row = this->ui->tableView->model()->rowCount();
+	//this->col = this->ui->tableView->model()->columnCount();
+	this->row = 0;
+	this->col = 2;
 	this->slotAtualizaChart();
+	this->criarTabela();
 }
 
 
