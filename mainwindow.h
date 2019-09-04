@@ -16,6 +16,7 @@
 #include <QLineSeries>
 #include <QtCharts>
 #include <QModelIndex>
+#include <QValueAxis>
 
 #include "tableDelegate.h"
 

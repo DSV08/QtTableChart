@@ -350,23 +350,52 @@ void MainWindow::slotAtualizaChart()
 	QChart *chart = new QChart();
 	chart->legend()->hide();
 	chart->setTitle("Titulo do Grafico");
+	
+	//QString name("Series ");
 
-	for (int j = 1; j <this->row; j++)
+	//Variaveis para indicar a dimensão máxima para os eixos x e y para que todos os linecharts possam caber na chartView
+	double maxDimensaoX = 0;
+	double maxDimensaoY = 0;
+	double minDimensaoX = 0;
+	double minDimensaoY = 0;
+
+	for (int j = 1; j <this->col; j++)
 	{
 
 		QLineSeries* series = new QLineSeries();
 		//QLineSeries* serie = new QLineSeries();
-		for (int i = 0; i <this->col; i++)
+		for (int i = 0; i <this->row; i++)
 		{
 			double x = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, 0)).toDouble();
 			double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, j)).toDouble();
 			series->append(x, y);
+
+			if (x > maxDimensaoX)
+				maxDimensaoX = x;
+			if (y > maxDimensaoY)
+				maxDimensaoY = y;
+			if (x < minDimensaoX)
+				minDimensaoX = x;
+			if (y < minDimensaoY)
+				minDimensaoY = y;
 		}
 
+		//series->setName(name + QString::number(j));
 		chart->addSeries(series);
 	}
 
-	chart->createDefaultAxes();
+	/*chart->createDefaultAxes();
+	chart->axisX()->setRange(minDimensaoX, maxDimensaoX);
+	chart->axisY()->setRange(minDimensaoY, maxDimensaoY);
+	this->ui->chartview->setChart(chart);
+	this->ui->chartview->update();*/
+
+	QValueAxis *xAxis = new QValueAxis();
+	QValueAxis *yAxis = new QValueAxis();
+	xAxis->setRange(minDimensaoX, maxDimensaoX);
+	yAxis->setRange(minDimensaoY, maxDimensaoY);
+	chart->setAxisX(xAxis);
+	chart->setAxisY(yAxis);
 	this->ui->chartview->setChart(chart);
 	this->ui->chartview->update();
 
@@ -685,6 +714,16 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 					this->slotAddLinha();
 				}
 			}
+
+			//Parte modificada
+			int quantidadeColunas = rowContents[0].split(',').size();
+			if (this->col < quantidadeColunas)
+			{
+				int diferenca = quantidadeColunas - this->col;
+				for (int i = 0; i < diferenca; i++)
+					this->slotAddColuna();
+			}
+			//fim
 			
 
 			QModelIndex initIndex = indexes.at(0);
