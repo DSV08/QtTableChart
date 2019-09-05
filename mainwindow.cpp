@@ -359,10 +359,13 @@ void MainWindow::slotAtualizaChart()
 	double minDimensaoX = 0;
 	double minDimensaoY = 0;
 
+
+
 	for (int j = 1; j <this->col; j++)
 	{
 
 		QLineSeries* series = new QLineSeries();
+			
 		//QLineSeries* serie = new QLineSeries();
 		for (int i = 0; i <this->row; i++)
 		{
@@ -705,6 +708,18 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 			QString text = QApplication::clipboard()->text();
 			QStringList rowContents = text.split("\n", QString::SkipEmptyParts);
 
+			//Parte modificada
+			//int quantidadeColunas = rowContents[0].split(",").size();
+			//int quantidadeColunas = text.split("\n")[0].split(",").size();
+			int quantidadeColunas = rowContents[0].split("\t").size();
+			if (this->col < quantidadeColunas)
+			{
+				int diferenca = quantidadeColunas - this->col;
+				for (int i = 0; i < diferenca; i++)
+					this->slotAddColuna();
+			}
+			//fim
+
 			//criando as linhas da tabela de acordo com o dado que estou copiando
 			if(this->row < rowContents.size())
 			{	
@@ -715,16 +730,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 				}
 			}
 
-			//Parte modificada
-			int quantidadeColunas = rowContents[0].split(',').size();
-			if (this->col < quantidadeColunas)
-			{
-				int diferenca = quantidadeColunas - this->col;
-				for (int i = 0; i < diferenca; i++)
-					this->slotAddColuna();
-			}
-			//fim
-			
+		
 
 			QModelIndex initIndex = indexes.at(0);
 			auto initRow = initIndex.row();
