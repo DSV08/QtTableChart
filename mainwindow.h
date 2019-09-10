@@ -132,7 +132,11 @@ private:
 	*/
 	//void desenhaChart(QList<QPointF> ptos);
 
-
+	/*!
+	* @brief Função para capturar eventos de teclado
+	* Captura eventos(copiar,colar,etc) de teclado e excecuta a determinada funcionalidade.
+	* @param Event Evento realizado no teclado
+	*/
 	void keyPressEvent(QKeyEvent *event);
 
 	private slots:
@@ -173,19 +177,19 @@ private:
 
 	/*!
 	 * @brief Slot Remover Linha por índice
-	 * Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
+	 * Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a(s) linha(s) selecionada(s)
 	 */
 	void slotRemoverLinhaPorIndice();
 
 	/*!
 	* @brief Slot Remover Linha por índice
-	* Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a linha selecionada
+	* Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a(s) linha(s) selecionada(s)
 	*/
 	void slotRemoverColunaPorIndice();
 
 	/*!
-	* @brief Slot para...
-	* Esse slot....
+	* @brief Slot Remover Tudo
+	* Esse slot é excecutado quando o botão Remover Tudo é clicado, removendo todas as linhas, todas as colunas e limpando o gráfico.
 	*/
 	void slotRemoverTudo();
 

@@ -383,22 +383,32 @@ void MainWindow::slotAtualizaChart()
 				minDimensaoY = y;
 		}
 
+		/*QValueAxis *xAxis = new QValueAxis();
+		QValueAxis *yAxis = new QValueAxis();
+		xAxis->setRange(minDimensaoX, maxDimensaoX);
+		yAxis->setRange(minDimensaoY, maxDimensaoY);
+		chart->setAxisX(xAxis);
+		chart->setAxisY(yAxis);*/
+
+
 		//series->setName(name + QString::number(j));
 		chart->addSeries(series);
 	}
 
-	/*chart->createDefaultAxes();
+	//eixos distintos para cada curva
+	chart->createDefaultAxes();
 	chart->axisX()->setRange(minDimensaoX, maxDimensaoX);
 	chart->axisY()->setRange(minDimensaoY, maxDimensaoY);
 	this->ui->chartview->setChart(chart);
-	this->ui->chartview->update();*/
+	this->ui->chartview->update();
 
-	QValueAxis *xAxis = new QValueAxis();
+	//mesmo eixo para todas as curvas
+	/*QValueAxis *xAxis = new QValueAxis();
 	QValueAxis *yAxis = new QValueAxis();
 	xAxis->setRange(minDimensaoX, maxDimensaoX);
 	yAxis->setRange(minDimensaoY, maxDimensaoY);
 	chart->setAxisX(xAxis);
-	chart->setAxisY(yAxis);
+	chart->setAxisY(yAxis);*/
 	this->ui->chartview->setChart(chart);
 	this->ui->chartview->update();
 
@@ -460,10 +470,12 @@ void MainWindow::slotRemoverLinhaPorIndice()
 	QItemSelectionModel *selectionModel = this->ui->tableView->selectionModel();
 	QList<QModelIndex> indexes = selectionModel->selectedIndexes();
 
-	for (QModelIndex index : indexes) {
+	selectionModel->model()->removeRows(indexes.at(0).row(), indexes.size());
+	this->row = ui->tableView->model()->rowCount();
+	/*for (QModelIndex index : indexes) {
 		selectionModel->model()->removeRow(index.row());
 		this->row = ui->tableView->model()->rowCount();
-	}
+	}*/
 	this->slotAtualizaChart();
 }
 
@@ -473,10 +485,13 @@ void MainWindow::slotRemoverColunaPorIndice()
 	QItemSelectionModel *selectionModel = this->ui->tableView->selectionModel();
 	QList<QModelIndex> indexes = selectionModel->selectedIndexes();
 
-	for (QModelIndex index : indexes) {
+	selectionModel->model()->removeColumns(indexes.at(0).column(), indexes.size());
+	this->col = ui->tableView->model()->columnCount();
+
+	/*for (QModelIndex index : indexes) {
 		selectionModel->model()->removeColumn(index.column());
 		this->col = ui->tableView->model()->columnCount();
-	}
+	}*/
 	this->slotAtualizaChart();
 
 }
@@ -531,7 +546,7 @@ void MainWindow::slotImportarArquivo()
 					 //this->slotRemoverTudo();
 					 //break;
 					 int diferenca = lista.size() - this->col;
-					 for (int i = 0; i < diferenca; i++)
+					 for (int i = 1; i < diferenca; i++)
 						 this->slotAddColuna();
 				 }
 				 if (!this->ui->tableView->model()->hasIndex(i, 0))
