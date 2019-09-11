@@ -139,6 +139,19 @@ void MainWindow::criarConects()
 	connect(this->ui->pushButton_removeColunaIndice, SIGNAL(clicked()), this, SLOT(slotRemoverColunaPorIndice()));
 
 
+	connect(ui->actionAdicionar_Linha, SIGNAL(triggered()), this, SLOT(slotAddLinha()));
+	connect(ui->actionRemover_Linha, SIGNAL(triggered()), this, SLOT(slotRemoveLinha()));
+	connect(ui->actionAdicionar_Coluna, SIGNAL(triggered()), this, SLOT(slotAddColuna()));
+	connect(ui->actionRemover_Coluna, SIGNAL(triggered()), this, SLOT(slotRemoveColuna()));
+	connect(this->ui->actionRemover_Linha_Indice, SIGNAL(triggered()), this, SLOT(slotRemoverLinhaPorIndice()));
+	connect(this->ui->actionRemover_Tudo, SIGNAL(triggered()), this, SLOT(slotRemoverTudo()));
+	connect(this->ui->actionImportar_Arquivo, SIGNAL(triggered()), this, SLOT(slotImportarArquivo()));
+	connect(this->ui->actionExportar_Arquivo, SIGNAL(triggered()), this, SLOT(slotExportarArquivo()));
+	connect(this->ui->actionRemover_Coluna_Indice, SIGNAL(triggered()), this, SLOT(slotRemoverColunaPorIndice()));
+	
+
+
+
 	connect(this->ui->tableView->model(), SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(slotTableChangeditemChanged(QModelIndex, QModelIndex)));
 
 	connect(this->ui->tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), SLOT(slotLoadTransaction(const QItemSelection &, const QItemSelection &)));
@@ -151,6 +164,8 @@ void MainWindow::criarConects()
 
 	//slots para o chart
 	connect(this->ui->pushButton_updateChart, SIGNAL(clicked()), this, SLOT(slotAtualizaChart()));
+
+	connect(this->ui->actionExportar_Arquivo, SIGNAL(triggered()), this, SLOT(slotAtualizaChart()));
 
 
 }
@@ -473,8 +488,8 @@ void MainWindow::slotRemoverLinhaPorIndice()
 	selectionModel->model()->removeRows(indexes.at(0).row(), indexes.size());
 	this->row = ui->tableView->model()->rowCount();
 	/*for (QModelIndex index : indexes) {
-		selectionModel->model()->removeRow(index.row());
-		this->row = ui->tableView->model()->rowCount();
+	selectionModel->model()->removeRow(index.row());
+	this->row = ui->tableView->model()->rowCount();
 	}*/
 	this->slotAtualizaChart();
 }
@@ -489,11 +504,10 @@ void MainWindow::slotRemoverColunaPorIndice()
 	this->col = ui->tableView->model()->columnCount();
 
 	/*for (QModelIndex index : indexes) {
-		selectionModel->model()->removeColumn(index.column());
-		this->col = ui->tableView->model()->columnCount();
+	selectionModel->model()->removeColumn(index.column());
+	this->col = ui->tableView->model()->columnCount();
 	}*/
 	this->slotAtualizaChart();
-
 }
 
 

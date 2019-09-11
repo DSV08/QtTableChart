@@ -137,8 +137,108 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionAdicionar_Linha"/>
+   <addaction name="actionRemover_Linha"/>
+   <addaction name="actionAdicionar_Coluna"/>
+   <addaction name="actionRemover_Coluna"/>
+   <addaction name="actionRemover_Linha_Indice"/>
+   <addaction name="actionRemover_Coluna_Indice"/>
+   <addaction name="actionRemover_Tudo"/>
+   <addaction name="actionAtualiza_Chart"/>
+   <addaction name="actionImportar_Arquivo"/>
+   <addaction name="actionExportar_Arquivo"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAdicionar_Linha">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Down Icon.png</normaloff>../../Icones QTableView/Down Icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Adicionar Linha</string>
+   </property>
+  </action>
+  <action name="actionRemover_Linha">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Up Icon.png</normaloff>../../Icones QTableView/Up Icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remover Linha</string>
+   </property>
+  </action>
+  <action name="actionAdicionar_Coluna">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Right Icon.png</normaloff>../../Icones QTableView/Right Icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Adicionar Coluna</string>
+   </property>
+  </action>
+  <action name="actionRemover_Coluna">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Left Icon.png</normaloff>../../Icones QTableView/Left Icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remover Coluna</string>
+   </property>
+  </action>
+  <action name="actionRemover_Linha_Indice">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Remover Linha Indice.png</normaloff>../../Icones QTableView/Remover Linha Indice.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remover Linha Indice</string>
+   </property>
+  </action>
+  <action name="actionRemover_Coluna_Indice">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Remover Coluna Indice.png</normaloff>../../Icones QTableView/Remover Coluna Indice.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remover Coluna Indice</string>
+   </property>
+  </action>
+  <action name="actionRemover_Tudo">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Remover Tudo.png</normaloff>../../Icones QTableView/Remover Tudo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remover Tudo</string>
+   </property>
+  </action>
+  <action name="actionAtualiza_Chart">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Chart icon.png</normaloff>../../Icones QTableView/Chart icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Atualiza Chart</string>
+   </property>
+  </action>
+  <action name="actionImportar_Arquivo">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Importar Arquivo.png</normaloff>../../Icones QTableView/Importar Arquivo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Importar Arquivo</string>
+   </property>
+  </action>
+  <action name="actionExportar_Arquivo">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Icones QTableView/Exportar Arquivo.png</normaloff>../../Icones QTableView/Exportar Arquivo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exportar Arquivo</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

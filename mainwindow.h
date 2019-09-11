@@ -103,6 +103,7 @@ private:
 	void criarConects();
 
 
+
 	//criar tabela inicial
 	/*!
 	* @brief Criação da tabela inicial
@@ -120,10 +121,12 @@ private:
 	//metodo para salvar os tipos de arquivo conforme escolhido pelo usuario, chamdo pelo slot save
 	void salvarArquivo();
 
+
 	/*!
 	* @brief Configura o Chart Inicial
 	*/
 	void configureChart();
+
 
 	/*!
 	*@brief Desenha o Chart
@@ -132,6 +135,7 @@ private:
 	*/
 	//void desenhaChart(QList<QPointF> ptos);
 
+
 	/*!
 	* @brief Função para capturar eventos de teclado
 	* Captura eventos(copiar,colar,etc) de teclado e excecuta a determinada funcionalidade.
@@ -139,7 +143,9 @@ private:
 	*/
 	void keyPressEvent(QKeyEvent *event);
 
+
 	private slots:
+
 
 	/*!
 	* @brief Slot adicionar linha
@@ -153,6 +159,7 @@ private:
 	* Esse slot é excecutado quando o botão adicionar coluna é clicado, adicionando uma coluna na tabela
 	*/
 	void slotAddColuna();
+
 
 	/*!
 	* @brief Slot remover linha
@@ -170,10 +177,11 @@ private:
 
 	/*!
 	 * @brief Slot Atualizar Chart
-	 * Esse slot é excecutado quando o botão Atualizar Chart é clicado, crindo ou atualizando
+	 * Esse slot é excecutado quando o botão Atualizar Chart é clicado, criando ou atualizando
 	 * o gráfico com os pontos formados pelas cordenadas passadas na tabela
 	 */
 	void slotAtualizaChart();
+
 
 	/*!
 	 * @brief Slot Remover Linha por índice
@@ -181,11 +189,13 @@ private:
 	 */
 	void slotRemoverLinhaPorIndice();
 
+
 	/*!
 	* @brief Slot Remover Linha por índice
 	* Esse slot é excecutado quando o botão Remover Linha por Índice é clicado, removendo a(s) linha(s) selecionada(s)
 	*/
 	void slotRemoverColunaPorIndice();
+
 
 	/*!
 	* @brief Slot Remover Tudo
@@ -193,38 +203,46 @@ private:
 	*/
 	void slotRemoverTudo();
 
+
 	/*!
-	* @brief Slot para...
-	* Esse slot....
+	* @brief Slot Importar Arquivo
+	* Esse slot é excecutado quando o botão Importar Arquivo é clicado, abrindo uma caixa de dialogo para selecionar um arquivo CSV 
+	* que será exibido na tabela 
 	*/
 	void slotImportarArquivo();
 
+
 	/*!
-	* @brief Slot para...
-	* Esse slot....
+	* @brief Slot Exportar Arquivo
+	* Esse slot é excecutado quando o botão Exportar Arquivo é clicado, abrindo uma caixa de dialogo para selecionar o lugar para salvar
+	* os dados na tabela como um arquivo CSV
 	*/
 	void slotExportarArquivo();
 
+
 	/*!
-	* @brief Slot para...
-	* Esse slot....
+	* @brief Slot para detectar mudanças
+	* Esse slot é excecutado quando qualquer valor na tabela é alterado, atualizando assim o gráfico a cada mudança 
 	*/
 	void slotTableChangeditemChanged(QModelIndex topLeft, QModelIndex bottomRight);
 
+
 	/*!
-	* @brief Slot para...
+	* @brief Slot para...Necessário?
 	* Esse slot....
 	*/
 	void slotLoadTransaction(const QItemSelection &, const QItemSelection &);
 
+
 	/*!
-	* @brief Slot para...
+	* @brief Slot para...Necessário?
 	* @param table ...
 	*/
 	void slotAddZeros(QTableView *table);
 
+
 	/*!
-	* @brief Slot para...
+	* @brief Slot para...Necessário?
 	*/
 	void slotTablePaste();
 
