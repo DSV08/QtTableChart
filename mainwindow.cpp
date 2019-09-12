@@ -369,11 +369,12 @@ void MainWindow::slotAtualizaChart()
 	//QString name("Series ");
 
 	//Variaveis para indicar a dimensão máxima para os eixos x e y para que todos os linecharts possam caber na chartView
-	double maxDimensaoX = 0;
-	double maxDimensaoY = 0;
-	double minDimensaoX = 0;
-	double minDimensaoY = 0;
+	double maxDimensaoY;
+	double minDimensaoX;
+	double maxDimensaoX;
+	double minDimensaoY;
 
+	QList<QPointF> pts;
 
 
 	for (int j = 1; j <this->col; j++)
@@ -388,6 +389,13 @@ void MainWindow::slotAtualizaChart()
 			double y = this->ui->tableView->model()->data(this->ui->tableView->model()->index(i, j)).toDouble();
 			series->append(x, y);
 
+			if (j ==1 && i == 0)
+			{
+				maxDimensaoX = x;
+				minDimensaoX = x;
+				maxDimensaoX = y;
+				minDimensaoY = y;
+			}
 			if (x > maxDimensaoX)
 				maxDimensaoX = x;
 			if (y > maxDimensaoY)
@@ -397,6 +405,8 @@ void MainWindow::slotAtualizaChart()
 			if (y < minDimensaoY)
 				minDimensaoY = y;
 		}
+
+		
 
 		/*QValueAxis *xAxis = new QValueAxis();
 		QValueAxis *yAxis = new QValueAxis();
@@ -424,8 +434,8 @@ void MainWindow::slotAtualizaChart()
 	yAxis->setRange(minDimensaoY, maxDimensaoY);
 	chart->setAxisX(xAxis);
 	chart->setAxisY(yAxis);*/
-	this->ui->chartview->setChart(chart);
-	this->ui->chartview->update();
+	//this->ui->chartview->setChart(chart);
+	// this->ui->chartview->update();
 
 
 
@@ -769,11 +779,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 			//loop para inserir dados copiados na tabela criada
 			for (auto i = 0; i < rowContents.size(); ++i) {
 				QStringList columnContents = rowContents.at(i).split("\t");
+				
 				this->ui->tableView->blockSignals(true);
 				for (auto j = 0; j < columnContents.size(); ++j) 
 				{
 					//inserindo dados na tabela atual
-					this->ui->tableView->model()->setData(this->ui->tableView->model()->index(initRow + i, initCol + j), columnContents.at(j).toDouble());
+					double value = columnContents.at(j).toDouble();
+					this->ui->tableView->model()->setData(this->ui->tableView->model()->index(initRow + i, initCol + j), value);
 				}
 				this->ui->tableView->blockSignals(false);
 			}
